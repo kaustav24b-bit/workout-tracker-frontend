@@ -11,7 +11,8 @@ const { Content, Footer } = Layout
 
 function WorkoutTracker({ isDarkMode, setIsDarkMode, exerciseList, setExerciseList }) {
   const navigate = useNavigate()
-  const username = localStorage.getItem('username')
+  const user = JSON.parse(localStorage.getItem('user'))
+  const username = user?.username
   const [selectedDate, setSelectedDate] = useState(dayjs())
 
   const fetchExerciseNames = async () => {

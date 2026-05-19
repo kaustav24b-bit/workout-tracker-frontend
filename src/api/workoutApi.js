@@ -1,8 +1,12 @@
 import api from './axios'
 
-// Fetch or create a workout day for a specific date
-export const getOrCreateWorkoutDay = (date, dayOfWeek) =>
-  api.post('/api/workout-days', { date, dayOfWeek })
+// Fetch or create a workout day for a specific date and user
+export const getOrCreateWorkoutDay = (date, dayOfWeek, userId) =>
+  api.post('/api/workout-days', {
+    date,
+    dayOfWeek,
+    user: { id: userId }
+  })
 
 // Fetch all exercises for a specific workout day
 export const getExercisesByWorkoutDayId = (workoutDayId) =>

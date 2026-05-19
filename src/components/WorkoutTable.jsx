@@ -35,9 +35,10 @@ function WorkoutTable({ selectedDate, exerciseList }) {
     try {
       const dateStr = selectedDate.format('YYYY-MM-DD')
       const dayOfWeek = selectedDate.format('dddd').toUpperCase()
+      const user = JSON.parse(localStorage.getItem('user'))
 
       // Get or create workout day for this date
-      const dayResponse = await getOrCreateWorkoutDay(dateStr, dayOfWeek)
+      const dayResponse = await getOrCreateWorkoutDay(dateStr, dayOfWeek, user?.id)
       const dayId = dayResponse.data.id
       setWorkoutDayId(dayId)
 
