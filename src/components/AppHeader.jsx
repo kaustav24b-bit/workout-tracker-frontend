@@ -7,11 +7,15 @@ const {Title,Text} = Typography
 function AppHeader({isDarkMode, setIsDarkMode, username}) {
   return (
     <Header
-        style={{
+      style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 24px',
+        padding: '0 16px',
+        height: 'auto',
+        minHeight: '64px',
+        paddingTop: '8px',
+        paddingBottom: '8px',
         position: 'sticky',
         top: 0,
         zIndex: 100,

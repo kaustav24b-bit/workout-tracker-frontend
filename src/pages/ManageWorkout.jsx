@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Layout, Button, Input, List, Typography, Space, Popconfirm, message } from 'antd'
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
+import { PlusOutlined, DeleteOutlined, SaveOutlined, EditOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import AppHeader from '../components/AppHeader'
 import { getAllExerciseNames, createExerciseName, updateExerciseName, deleteExerciseName } from '../api/exerciseNameApi'
@@ -10,7 +10,8 @@ const { Title } = Typography
 
 function ManageWorkout({ isDarkMode, setIsDarkMode, setExerciseList }) {
   const navigate = useNavigate()
-  const username = localStorage.getItem('username')
+  const user = JSON.parse(localStorage.getItem('user'))
+  const username = user?.username
 
   // Each item is now { id, name } instead of just a string
   const [exercises, setExercises] = useState([])
@@ -107,17 +108,27 @@ function ManageWorkout({ isDarkMode, setIsDarkMode, setExerciseList }) {
           bordered
           dataSource={exercises}
           renderItem={(item) => (
-            <List.Item
-              actions={[
-                editingId === item.id ? (
+            <List.Item style={{ padding: '8px 12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', width: '100%', gap: '8px' }}>
+              {editingId === item.id ? (
+                <>
+                  <Input
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    onPressEnter={() => editExercise(item.id)}
+                    style={{ flex: 1 }}
+                  />
                   <Button
                     size="small"
-                    type="primary"
+                    type="default"
                     onClick={() => editExercise(item.id)}
                   >
-                    Save
+                    <SaveOutlined/>
                   </Button>
-                ) : (
+                </>
+              ) : (
+                <>
+                  <span style={{ flex: 1 }}>{item.name}</span>
                   <Button
                     size="small"
                     onClick={() => {
@@ -125,31 +136,21 @@ function ManageWorkout({ isDarkMode, setIsDarkMode, setExerciseList }) {
                       setEditValue(item.name)
                     }}
                   >
-                    Edit
+                    <EditOutlined/>
                   </Button>
-                ),
-                <Popconfirm
-                  title="Delete this exercise?"
-                  description="This will remove it from the dropdown."
-                  onConfirm={() => deleteExercise(item.id)}
-                  okText="Yes"
-                  cancelText="No"
-                >
-                  <Button danger size="small" icon={<DeleteOutlined />} />
-                </Popconfirm>
-              ]}
-            >
-              {editingId === item.id ? (
-                <Input
-                  value={editValue}
-                  onChange={(e) => setEditValue(e.target.value)}
-                  onPressEnter={() => editExercise(item.id)}
-                  style={{ width: 200 }}
-                />
-              ) : (
-                item.name
+                </>
               )}
-            </List.Item>
+              <Popconfirm
+                title="Delete this exercise?"
+                description="This will remove it from the dropdown."
+                onConfirm={() => deleteExercise(item.id)}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button danger size="small" icon={<DeleteOutlined />} />
+              </Popconfirm>
+            </div>
+          </List.Item>
           )}
         />
 

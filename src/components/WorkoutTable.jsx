@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Table, Button, Select, InputNumber, Space, message } from 'antd'
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
+import { PlusOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons'
 import {
   getOrCreateWorkoutDay,
   getExercisesByWorkoutDayId,
@@ -180,6 +180,7 @@ function WorkoutTable({ selectedDate, exerciseList }) {
     {
       title: 'Name',
       dataIndex: 'name',
+      width: 160,
       render: (_, record) => {
         if (!record.isFirstRow) return { children: null, props: { rowSpan: 0 } }
         return {
@@ -208,11 +209,13 @@ function WorkoutTable({ selectedDate, exerciseList }) {
     {
       title: 'Set',
       dataIndex: 'setNumber',
+      width: 45,
       render: (val) => val,
     },
     {
       title: 'Rep',
       dataIndex: 'reps',
+      width: 70,
       render: (_, record) => (
         <InputNumber
           min={0}
@@ -224,6 +227,7 @@ function WorkoutTable({ selectedDate, exerciseList }) {
     {
       title: 'Weight (kg)',
       dataIndex: 'weight',
+      width: 70,
       render: (_, record) => (
         <InputNumber
           min={0}
@@ -234,6 +238,7 @@ function WorkoutTable({ selectedDate, exerciseList }) {
     },
     {
       title: 'Stats',
+      width: 90,
       render: (_, record) => {
         if (!record.isFirstRow) return { children: null, props: { rowSpan: 0 } }
         return {
@@ -244,10 +249,11 @@ function WorkoutTable({ selectedDate, exerciseList }) {
     },
     {
       title: 'Action',
+      width: 90,
       render: (_, record) => (
         <Space>
-          <Button size="small" type="primary" onClick={() => saveSetRow(record)}>
-            Save
+          <Button size="small" type="default" onClick={() => saveSetRow(record)}>
+            <SaveOutlined/>
           </Button>
           <Button size="small" danger icon={<DeleteOutlined />} onClick={() => deleteSetRow(record)} />
         </Space>
@@ -263,6 +269,8 @@ function WorkoutTable({ selectedDate, exerciseList }) {
         rowKey="rowId"
         pagination={false}
         bordered
+        scroll={{ x: 'max-content' }}
+        size="small"
       />
       <Button
         type="dashed"
