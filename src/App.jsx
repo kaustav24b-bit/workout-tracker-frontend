@@ -9,8 +9,8 @@ function App() {
   const [isDarkMode, setIsDarkMode] = useState(true)
   const [exerciseList, setExerciseList] = useState([])
 
-  const bgColor = isDarkMode ? '#141414' : '#ffffff'
-  const textColor = isDarkMode ? '#ffffff' : '#000000'
+  const bgColor = isDarkMode ? '#141414' : '#add7e4'
+  const textColor = isDarkMode ? '#ffffff' : '#ffffff'
 
   return (
     <ConfigProvider

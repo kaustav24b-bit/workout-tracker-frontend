@@ -21,19 +21,17 @@ function AppHeader({isDarkMode, setIsDarkMode, username}) {
         zIndex: 100,
       }}
     >
-        {/* Left side — App name and welcome message */}
       <Space direction="vertical" size={0}>
-        <Title level={4} style={{ margin: 0 }}>
+        <Title level={4} style={{ margin: 0, color: '#ffffff' }}>
           App Name
         </Title>
         {username && (
-          <Text type="secondary">Hello {username}!</Text>
+          <Text style={{ color: '#ffffff' }}>Hello {username}!</Text>
         )}
       </Space>
 
-      {/* Right side — date and theme toggle */}
       <Space>
-        <Text>{dayjs().format('dddd, MMMM D YYYY')}</Text>
+        <Text style={{ color: '#ffffff' }}>{dayjs().format('dddd, MMMM D YYYY')}</Text>
         <Switch
           checked={isDarkMode}
           onChange={setIsDarkMode}
