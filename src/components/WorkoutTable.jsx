@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Table, Button, Select, InputNumber, Space, message } from 'antd'
 import { PlusOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
 import {
   getOrCreateWorkoutDay,
   getExercisesByWorkoutDayId,
@@ -30,6 +31,7 @@ const createExerciseGroup = () => {
 function WorkoutTable({ selectedDate, exerciseList }) {
   const [exercises, setExercises] = useState([])
   const [workoutDayId, setWorkoutDayId] = useState(null)
+  const navigate = useNavigate()
 
   const fetchWorkoutData = async () => {
     try {
@@ -242,7 +244,9 @@ function WorkoutTable({ selectedDate, exerciseList }) {
       render: (_, record) => {
         if (!record.isFirstRow) return { children: null, props: { rowSpan: 0 } }
         return {
-          children: <Button size="small">Check Stats</Button>,
+          children: <Button size="small"
+            onClick={() => navigate(`/stats?exercise=${encodeURIComponent(record.name)}`)}
+            >Check Stats</Button>,
           props: { rowSpan: record.rowSpan }
         }
       }

@@ -4,6 +4,7 @@ import { ConfigProvider, theme } from 'antd'
 import UserSelection from './pages/UserSelection'
 import WorkoutTracker from './pages/WorkoutTracker'
 import ManageWorkout from './pages/ManageWorkout'
+import StatsPage from './pages/StatsPage'
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(true)
@@ -24,6 +25,7 @@ function App() {
           <Route path="/select-user" element={<UserSelection isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />} />
           <Route path="/workout" element={<WorkoutTracker isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} exerciseList={exerciseList} setExerciseList={setExerciseList} />} />
           <Route path="/manage-workout" element={<ManageWorkout isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} setExerciseList={setExerciseList} />} />
+          <Route path="/stats" element={<StatsPage isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />} />
         </Routes>
       </div>
     </ConfigProvider>
