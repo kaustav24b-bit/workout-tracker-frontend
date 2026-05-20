@@ -7,7 +7,7 @@ import api from '../api/axios'
 const { Content } = Layout
 const { Title } = Typography
 
-function UserSelection({ isDarkMode, setIsDarkMode }) {
+function UserSelection({ isDarkMode, setIsDarkMode, setCurrentUser }) {
   const navigate = useNavigate()
   const [users, setUsers] = useState([])
 
@@ -27,6 +27,7 @@ function UserSelection({ isDarkMode, setIsDarkMode }) {
   const handleUserSelect = (user) => {
     // Store full user object so we have both id and username available
     localStorage.setItem('user', JSON.stringify(user))
+    setCurrentUser(user)
     navigate('/workout')
   }
 
@@ -50,8 +51,22 @@ function UserSelection({ isDarkMode, setIsDarkMode }) {
               type="primary"
               size="large"
               onClick={() => handleUserSelect(user)}
+              style={user.username === 'Kajal' ? {
+                backgroundImage: 'url(/kajal_button.jpg)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                border: 'none',
+                color: '#122060',
+                height: '60px',
+                width: '160px',
+              } : {
+                height: '60px',
+                width: '160px',
+                background: '#2c2c2c',
+                color: '#ffffffff',
+              }}
             >
-              Proceed as {user.username}
+              {user.username}
             </Button>
           ))}
         </Space>

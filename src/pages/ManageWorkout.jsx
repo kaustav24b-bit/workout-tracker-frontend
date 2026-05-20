@@ -82,7 +82,7 @@ function ManageWorkout({ isDarkMode, setIsDarkMode, setExerciseList }) {
         username={username}
       />
       <Content style={{ padding: '24px', maxWidth: '600px' }}>
-        <Title level={4}>Manage Workout</Title>
+        <Title level={4} style={{ color: '#003366' }}>Manage Workout</Title>
 
         {/* Add new exercise */}
         <Space style={{ marginBottom: '24px' }}>
@@ -107,6 +107,7 @@ function ManageWorkout({ isDarkMode, setIsDarkMode, setExerciseList }) {
         <List
           bordered
           dataSource={exercises}
+          style={{ background: 'rgba(0, 0, 0, 0.92)', borderRadius: '8px' }}
           renderItem={(item) => (
             <List.Item style={{ padding: '8px 12px' }}>
             <div style={{ display: 'flex', alignItems: 'center', width: '100%', gap: '8px' }}>

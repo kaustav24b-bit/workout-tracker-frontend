@@ -1,17 +1,44 @@
 import { useState } from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { ConfigProvider, theme } from 'antd'
 import UserSelection from './pages/UserSelection'
 import WorkoutTracker from './pages/WorkoutTracker'
 import ManageWorkout from './pages/ManageWorkout'
 import StatsPage from './pages/StatsPage'
 
+function AppContent({ isDarkMode, setIsDarkMode, exerciseList, setExerciseList, currentUser, setCurrentUser }) {
+  const location = useLocation()
+  const isKajal = currentUser?.username === 'Kajal'
+  const isSelectUserPage = location.pathname === '/select-user'
+
+  const bgColor = isDarkMode ? '#141414' : '#ffffff'
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: isKajal && !isSelectUserPage
+        ? 'url(/kajal_bg.jpg) center/cover no-repeat fixed'
+        : bgColor,
+      color: isDarkMode ? '#ffffff' : '#000000'
+    }}>
+      <Routes>
+        <Route path="/" element={<Navigate to="/select-user" />} />
+        <Route path="/select-user" element={<UserSelection isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} setCurrentUser={setCurrentUser} />} />
+        <Route path="/workout" element={<WorkoutTracker isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} exerciseList={exerciseList} setExerciseList={setExerciseList} />} />
+        <Route path="/manage-workout" element={<ManageWorkout isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} setExerciseList={setExerciseList} />} />
+        <Route path="/stats" element={<StatsPage isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />} />
+      </Routes>
+    </div>
+  )
+}
+
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(true)
   const [exerciseList, setExerciseList] = useState([])
-
-  const bgColor = isDarkMode ? '#141414' : '#add7e4'
-  const textColor = isDarkMode ? '#ffffff' : '#ffffff'
+  const [currentUser, setCurrentUser] = useState(() => {
+    const stored = localStorage.getItem('user')
+    return stored ? JSON.parse(stored) : null
+  })
 
   return (
     <ConfigProvider
@@ -19,15 +46,14 @@ function App() {
         algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
       }}
     >
-      <div style={{ minHeight: '100vh', background: bgColor, color: textColor }}>
-        <Routes>
-          <Route path="/" element={<Navigate to="/select-user" />} />
-          <Route path="/select-user" element={<UserSelection isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />} />
-          <Route path="/workout" element={<WorkoutTracker isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} exerciseList={exerciseList} setExerciseList={setExerciseList} />} />
-          <Route path="/manage-workout" element={<ManageWorkout isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} setExerciseList={setExerciseList} />} />
-          <Route path="/stats" element={<StatsPage isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />} />
-        </Routes>
-      </div>
+      <AppContent
+        isDarkMode={isDarkMode}
+        setIsDarkMode={setIsDarkMode}
+        exerciseList={exerciseList}
+        setExerciseList={setExerciseList}
+        currentUser={currentUser}
+        setCurrentUser={setCurrentUser}
+      />
     </ConfigProvider>
   )
 }
