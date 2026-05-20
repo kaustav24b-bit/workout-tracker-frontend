@@ -1,10 +1,13 @@
 import { Layout, Switch, Typography, Space } from 'antd'
 import { SunOutlined, MoonOutlined } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 const {Header} = Layout
 const {Title,Text} = Typography
 
+
 function AppHeader({isDarkMode, setIsDarkMode, username}) {
+  const navigate = useNavigate()
   return (
     <Header
       style={{
@@ -22,7 +25,8 @@ function AppHeader({isDarkMode, setIsDarkMode, username}) {
       }}
     >
       <Space direction="vertical" size={0}>
-        <Title level={4} style={{ margin: 0, color: '#ffffff' }}>
+        <Title level={4} style={{ margin: 0, color: '#ffffff' }}
+         onClick={() => navigate('/select-user')}>
           Gym Track
         </Title>
         {username && (
