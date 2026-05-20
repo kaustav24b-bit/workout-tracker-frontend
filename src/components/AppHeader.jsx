@@ -23,7 +23,7 @@ function AppHeader({isDarkMode, setIsDarkMode, username}) {
     >
       <Space direction="vertical" size={0}>
         <Title level={4} style={{ margin: 0, color: '#ffffff' }}>
-          App Name
+          Gym Track
         </Title>
         {username && (
           <Text style={{ color: '#ffffff' }}>Hello {username}!</Text>
