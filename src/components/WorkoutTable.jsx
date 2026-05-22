@@ -28,7 +28,7 @@ const createExerciseGroup = () => {
   }
 }
 
-function WorkoutTable({ selectedDate, exerciseList }) {
+function WorkoutTable({ selectedDate, exerciseList, loadedExercises, setLoadedExercises, onExercisesChange }) {
   const [exercises, setExercises] = useState([])
   const [workoutDayId, setWorkoutDayId] = useState(null)
   const navigate = useNavigate()
@@ -78,6 +78,17 @@ function WorkoutTable({ selectedDate, exerciseList }) {
   useEffect(() => {
     fetchWorkoutData()
   }, [selectedDate])
+
+  useEffect(() => {
+    if (loadedExercises && loadedExercises.length > 0) {
+      setExercises(loadedExercises)
+    }
+  }, [loadedExercises])
+
+  useEffect(() => {
+    const names = [...new Set(exercises.map(ex => ex.name).filter(Boolean))]
+    onExercisesChange(names)
+  }, [exercises.length])
 
   const addExercise = () => {
     setExercises([...exercises, createExerciseGroup()])
@@ -177,6 +188,8 @@ function WorkoutTable({ selectedDate, exerciseList }) {
       exerciseId: ex.exerciseId,
     }))
   )
+
+  
 
   const columns = [
     {
