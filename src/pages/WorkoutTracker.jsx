@@ -131,7 +131,7 @@ function WorkoutTracker({ isDarkMode, setIsDarkMode, exerciseList, setExerciseLi
         </Space>
         <Button
           type="primary"
-          style={{ background: '#52c41a' }}
+          style={{ background: '#33631a' }}
           onClick={() => workoutTableRef.current?.saveAll()}
         >
           Save All
