@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react'
 import { Table, Button, Select, InputNumber, Space, message } from 'antd'
 import { PlusOutlined, DeleteOutlined, SaveOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
@@ -16,7 +16,7 @@ const createSetRow = (exerciseId, setNumber) => ({
   setNumber,
   reps: null,
   weight: null,
-  dbId: null, // will be set after saving to backend
+  dbId: null,
 })
 
 const createExerciseGroup = () => {
@@ -28,39 +28,36 @@ const createExerciseGroup = () => {
   }
 }
 
-function WorkoutTable({ selectedDate, exerciseList, loadedExercises, setLoadedExercises, onExercisesChange }) {
+const WorkoutTable = forwardRef(function WorkoutTable({ selectedDate, exerciseList, loadedExercises, onExercisesChange }, ref) {
   const [exercises, setExercises] = useState([])
   const [workoutDayId, setWorkoutDayId] = useState(null)
   const navigate = useNavigate()
 
-  const fetchWorkoutData = async () => {
+  const fetchWorkoutData = useCallback(async () => {
     try {
       const dateStr = selectedDate.format('YYYY-MM-DD')
       const dayOfWeek = selectedDate.format('dddd').toUpperCase()
       const user = JSON.parse(localStorage.getItem('user'))
 
-      // Get or create workout day for this date
       const dayResponse = await getOrCreateWorkoutDay(dateStr, dayOfWeek, user?.id)
       const dayId = dayResponse.data.id
       setWorkoutDayId(dayId)
 
-      // Fetch exercises for this workout day
       const exercisesResponse = await getExercisesByWorkoutDayId(dayId)
       const data = exercisesResponse.data
 
-      // Group flat exercise rows into exercise groups by name
       const grouped = {}
       data.forEach(row => {
         if (!grouped[row.name]) {
           grouped[row.name] = {
-            exerciseId: row.id,
+            exerciseId: row.name,
             name: row.name,
             sets: []
           }
         }
         grouped[row.name].sets.push({
-          rowId: `${row.id}-set-${row.sets}`,
-          exerciseId: row.id,
+          rowId: `db-${row.id}`,
+          exerciseId: row.name,
           setNumber: row.sets,
           reps: row.reps,
           weight: row.weight,
@@ -72,23 +69,25 @@ function WorkoutTable({ selectedDate, exerciseList, loadedExercises, setLoadedEx
     } catch (error) {
       message.error('Failed to load workout data')
     }
-  }
-
-  // Fetch workout data whenever the selected date changes
-  useEffect(() => {
-    fetchWorkoutData()
   }, [selectedDate])
 
+  // Refetch when date changes
+  useEffect(() => {
+    fetchWorkoutData()
+  }, [fetchWorkoutData])
+
+  // Load template exercises into table
   useEffect(() => {
     if (loadedExercises && loadedExercises.length > 0) {
       setExercises(loadedExercises)
     }
   }, [loadedExercises])
 
+  // Notify parent of current exercise names for Save as Template
   useEffect(() => {
     const names = [...new Set(exercises.map(ex => ex.name).filter(Boolean))]
     onExercisesChange(names)
-  }, [exercises.length])
+  }, [exercises.length, onExercisesChange])
 
   const addExercise = () => {
     setExercises([...exercises, createExerciseGroup()])
@@ -121,14 +120,12 @@ function WorkoutTable({ selectedDate, exerciseList, loadedExercises, setLoadedEx
     })))
   }
 
-  // Save a single set row to the backend
   const saveSetRow = async (record) => {
     if (!record.reps || !record.weight) {
       message.warning('Please fill in reps and weight before saving')
       return
     }
 
-    // Find the exercise name for this row
     const exercise = exercises.find(ex => ex.exerciseId === record.exerciseId)
     if (!exercise?.name) {
       message.warning('Please select an exercise name first')
@@ -145,20 +142,20 @@ function WorkoutTable({ selectedDate, exerciseList, loadedExercises, setLoadedEx
       }
 
       if (record.dbId) {
-        // Update existing row
         await updateExercise(record.dbId, payload)
+        message.success('Saved')
       } else {
-        // Create new row
         const response = await createExercise(payload)
-        // Update local state with the new dbId
         setExercises(prev => prev.map(ex => ({
           ...ex,
           sets: ex.sets.map(set =>
-            set.rowId === record.rowId ? { ...set, dbId: response.data.id } : set
+            set.rowId === record.rowId
+              ? { ...set, dbId: response.data.id, rowId: `db-${response.data.id}` }
+              : set
           )
         })))
+        message.success('Saved')
       }
-      message.success('Saved')
     } catch (error) {
       message.error('Failed to save')
     }
@@ -179,6 +176,52 @@ function WorkoutTable({ selectedDate, exerciseList, loadedExercises, setLoadedEx
     }
   }
 
+  // Save all filled rows at once
+  const saveAll = async () => {
+    let savedCount = 0
+    let skippedCount = 0
+
+    for (const ex of exercises) {
+      if (!ex.name) { skippedCount++; continue }
+      for (const set of ex.sets) {
+        if (!set.reps || !set.weight) { skippedCount++; continue }
+        try {
+          const payload = {
+            name: ex.name,
+            sets: set.setNumber,
+            reps: set.reps,
+            weight: set.weight,
+            workoutDay: { id: workoutDayId }
+          }
+          if (set.dbId) {
+            await updateExercise(set.dbId, payload)
+          } else {
+            const response = await createExercise(payload)
+            setExercises(prev => prev.map(e => ({
+              ...e,
+              sets: e.sets.map(s =>
+                s.rowId === set.rowId
+                  ? { ...s, dbId: response.data.id, rowId: `db-${response.data.id}` }
+                  : s
+              )
+            })))
+          }
+          savedCount++
+        } catch (error) {
+          message.error(`Failed to save ${ex.name}`)
+        }
+      }
+    }
+
+    if (savedCount > 0) message.success(`Saved ${savedCount} set(s)`)
+    if (skippedCount > 0) message.warning(`Skipped ${skippedCount} incomplete set(s)`)
+  }
+
+  // Expose saveAll to parent via ref
+  useImperativeHandle(ref, () => ({
+    saveAll
+  }))
+
   const tableRows = exercises.flatMap(ex =>
     ex.sets.map((set, index) => ({
       ...set,
@@ -188,8 +231,6 @@ function WorkoutTable({ selectedDate, exerciseList, loadedExercises, setLoadedEx
       exerciseId: ex.exerciseId,
     }))
   )
-
-  
 
   const columns = [
     {
@@ -257,9 +298,14 @@ function WorkoutTable({ selectedDate, exerciseList, loadedExercises, setLoadedEx
       render: (_, record) => {
         if (!record.isFirstRow) return { children: null, props: { rowSpan: 0 } }
         return {
-          children: <Button size="small"
-            onClick={() => navigate(`/stats?exercise=${encodeURIComponent(record.name)}`)}
-            >Check Stats</Button>,
+          children: (
+            <Button
+              size="small"
+              onClick={() => navigate(`/stats?exercise=${encodeURIComponent(record.name)}`)}
+            >
+              Check Stats
+            </Button>
+          ),
           props: { rowSpan: record.rowSpan }
         }
       }
@@ -270,7 +316,7 @@ function WorkoutTable({ selectedDate, exerciseList, loadedExercises, setLoadedEx
       render: (_, record) => (
         <Space>
           <Button size="small" type="default" onClick={() => saveSetRow(record)}>
-            <SaveOutlined/>
+            <SaveOutlined />
           </Button>
           <Button size="small" danger icon={<DeleteOutlined />} onClick={() => deleteSetRow(record)} />
         </Space>
@@ -299,6 +345,6 @@ function WorkoutTable({ selectedDate, exerciseList, loadedExercises, setLoadedEx
       </Button>
     </Space>
   )
-}
+})
 
 export default WorkoutTable

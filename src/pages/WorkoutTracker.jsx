@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Layout, Button, Select, Space, Modal, Input, message } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
@@ -20,6 +20,7 @@ function WorkoutTracker({ isDarkMode, setIsDarkMode, exerciseList, setExerciseLi
   const [templateName, setTemplateName] = useState('')
   const [loadedExercises, setLoadedExercises] = useState(null)
   const [currentExerciseNames, setCurrentExerciseNames] = useState([])
+  const workoutTableRef = useRef(null)
 
   const fetchExerciseNames = async () => {
     try {
@@ -109,6 +110,7 @@ function WorkoutTracker({ isDarkMode, setIsDarkMode, exerciseList, setExerciseLi
           setSelectedDate={setSelectedDate}
         />
         <WorkoutTable
+          ref={workoutTableRef}
           selectedDate={selectedDate}
           exerciseList={exerciseList}
           loadedExercises={loadedExercises}
@@ -118,6 +120,7 @@ function WorkoutTracker({ isDarkMode, setIsDarkMode, exerciseList, setExerciseLi
       </Content>
 
       <Footer style={{ background: 'transparent', padding: '16px 24px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Space>
           <Button type="default" onClick={() => navigate('/manage-workout')}>
             Manage Workout
@@ -126,6 +129,14 @@ function WorkoutTracker({ isDarkMode, setIsDarkMode, exerciseList, setExerciseLi
             Save as Template
           </Button>
         </Space>
+        <Button
+          type="primary"
+          style={{ background: '#52c41a' }}
+          onClick={() => workoutTableRef.current?.saveAll()}
+        >
+          Save All
+        </Button>
+        </div>
       </Footer>
 
       {/* Save as Template modal */}
