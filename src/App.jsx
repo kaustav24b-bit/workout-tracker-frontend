@@ -5,6 +5,7 @@ import UserSelection from './pages/UserSelection'
 import WorkoutTracker from './pages/WorkoutTracker'
 import ManageWorkout from './pages/ManageWorkout'
 import StatsPage from './pages/StatsPage'
+import ManageTemplate from './pages/ManageTemplate'
 
 function AppContent({ isDarkMode, setIsDarkMode, exerciseList, setExerciseList, currentUser, setCurrentUser }) {
   const location = useLocation()
@@ -27,6 +28,7 @@ function AppContent({ isDarkMode, setIsDarkMode, exerciseList, setExerciseList, 
         <Route path="/workout" element={<WorkoutTracker isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} exerciseList={exerciseList} setExerciseList={setExerciseList} />} />
         <Route path="/manage-workout" element={<ManageWorkout isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} setExerciseList={setExerciseList} />} />
         <Route path="/stats" element={<StatsPage isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />} />
+        <Route path="/manage-template" element={<ManageTemplate isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} exerciseList={exerciseList} />} />
       </Routes>
     </div>
   )

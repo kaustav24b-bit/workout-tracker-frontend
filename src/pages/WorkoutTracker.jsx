@@ -136,6 +136,9 @@ function WorkoutTracker({ isDarkMode, setIsDarkMode, exerciseList, setExerciseLi
         >
           Save All
         </Button>
+        <Button type="default" onClick={() => navigate('/manage-template')}>
+          Manage Templates
+        </Button>
         </div>
       </Footer>
 
