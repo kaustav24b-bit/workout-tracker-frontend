@@ -96,13 +96,20 @@ function WorkoutTracker({ isDarkMode, setIsDarkMode, exerciseList, setExerciseLi
       />
       <Content style={{ padding: '24px' }}>
         {/* Template dropdown */}
-        <Space style={{ marginBottom: '16px', width: '100%' }}>
+        <Space direction="vertical" style={{ marginBottom: '16px', width: '100%' }}>
           <Select
             placeholder="Load a template..."
             style={{ width: 200 }}
             onChange={loadTemplate}
             options={templates.map(t => ({ label: t.name, value: t.id }))}
           />
+          <Button type="primary" onClick={() => setSaveModalOpen(true)}>
+            Save as Template
+          </Button>
+          <Button type="default" onClick={() => navigate('/manage-template')}>
+          Manage Templates
+        </Button>
+
         </Space>
 
         <DateNavigator
@@ -125,9 +132,6 @@ function WorkoutTracker({ isDarkMode, setIsDarkMode, exerciseList, setExerciseLi
           <Button type="default" onClick={() => navigate('/manage-workout')}>
             Manage Workout
           </Button>
-          <Button type="primary" onClick={() => setSaveModalOpen(true)}>
-            Save as Template
-          </Button>
         </Space>
         <Button
           type="primary"
@@ -135,9 +139,6 @@ function WorkoutTracker({ isDarkMode, setIsDarkMode, exerciseList, setExerciseLi
           onClick={() => workoutTableRef.current?.saveAll()}
         >
           Save All
-        </Button>
-        <Button type="default" onClick={() => navigate('/manage-template')}>
-          Manage Templates
         </Button>
         </div>
       </Footer>
