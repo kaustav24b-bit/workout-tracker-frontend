@@ -88,13 +88,13 @@ function WorkoutTracker({ isDarkMode, setIsDarkMode, exerciseList, setExerciseLi
   }, [])
 
   return (
-    <Layout style={{ minHeight: '100vh', background: 'transparent' }}>
+    <Layout style={{ minHeight: '100vh', background: 'transparent', maxWidth: '100vw', overflowX: 'hidden' }}>
       <AppHeader
         isDarkMode={isDarkMode}
         setIsDarkMode={setIsDarkMode}
         username={username}
       />
-      <Content style={{ padding: '24px' }}>
+      <Content style={{ padding: '24px', overflowX: 'hidden', maxWidth: '100vw' }}>
         {/* Template dropdown */}
         <Space direction="vertical" style={{ marginBottom: '16px', width: '100%' }}>
           <Select
@@ -103,13 +103,6 @@ function WorkoutTracker({ isDarkMode, setIsDarkMode, exerciseList, setExerciseLi
             onChange={loadTemplate}
             options={templates.map(t => ({ label: t.name, value: t.id }))}
           />
-          <Button type="primary" onClick={() => setSaveModalOpen(true)}>
-            Save as Template
-          </Button>
-          <Button type="default" onClick={() => navigate('/manage-template')}>
-          Manage Templates
-        </Button>
-
         </Space>
 
         <DateNavigator
@@ -126,20 +119,40 @@ function WorkoutTracker({ isDarkMode, setIsDarkMode, exerciseList, setExerciseLi
         />
       </Content>
 
-      <Footer style={{ background: 'transparent', padding: '16px 24px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Space>
-          <Button type="default" onClick={() => navigate('/manage-workout')}>
-            Manage Workout
-          </Button>
-        </Space>
-        <Button
-          type="primary"
-          style={{ background: '#33631a' }}
-          onClick={() => workoutTableRef.current?.saveAll()}
-        >
-          Save All
-        </Button>
+      <Footer style={{ background: 'transparent', padding: '16px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <Button
+              type="default"
+              style={{ flex: 1 }}
+              onClick={() => navigate('/manage-template')}
+            >
+              Manage Templates
+            </Button>
+            <Button
+              type="primary"
+              style={{ flex: 1 }}
+              onClick={() => setSaveModalOpen(true)}
+            >
+              Save as Template
+            </Button>
+          </div>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <Button
+              type="default"
+              style={{ flex: 1 }}
+              onClick={() => navigate('/manage-workout')}
+            >
+              Manage Workout
+            </Button>
+            <Button
+              type="primary"
+              style={{ flex: 1, background: '#33631a' }}
+              onClick={() => workoutTableRef.current?.saveAll()}
+            >
+              Save All
+            </Button>
+          </div>
         </div>
       </Footer>
 

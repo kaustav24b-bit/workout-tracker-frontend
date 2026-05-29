@@ -9,21 +9,22 @@ const {Title,Text} = Typography
 function AppHeader({isDarkMode, setIsDarkMode, username}) {
   const navigate = useNavigate()
   return (
-    <Header
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 16px',
-        height: 'auto',
-        minHeight: '64px',
-        paddingTop: '8px',
-        paddingBottom: '8px',
-        position: 'sticky',
-        top: 0,
-        zIndex: 100,
-      }}
-    >
+    <Header style={{
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  padding: '0 16px',
+  height: 'auto',
+  minHeight: '64px',
+  paddingTop: '8px',
+  paddingBottom: '8px',
+  position: 'sticky',
+  top: 0,
+  zIndex: 100,
+  maxWidth: '100vw',
+  overflowX: 'hidden',
+  width: '100%',
+}}>
       <Space direction="vertical" size={0}>
         <Title level={4} style={{ margin: 0, color: '#ffffff' }}
          onClick={() => navigate('/select-user')}>
@@ -35,7 +36,9 @@ function AppHeader({isDarkMode, setIsDarkMode, username}) {
       </Space>
 
       <Space>
-        <Text style={{ color: '#ffffff' }}>{dayjs().format('dddd, MMMM D YYYY')}</Text>
+        <Text style={{ color: '#ffffff', fontSize: '12px', whiteSpace: 'nowrap' }}>
+  {dayjs().format('ddd, MMM D YYYY')}
+</Text>
         <Switch
           checked={isDarkMode}
           onChange={setIsDarkMode}

@@ -325,7 +325,8 @@ const WorkoutTable = forwardRef(function WorkoutTable({ selectedDate, exerciseLi
   ]
 
   return (
-    <Space direction="vertical" style={{ width: '100%' }}>
+    <div style={{ width: '100%', overflowX: 'auto' }}>
+    <Space direction="vertical" style={{ width: '100%', minWidth: 0 }}>
       <Table
         dataSource={tableRows}
         columns={columns}
@@ -344,6 +345,7 @@ const WorkoutTable = forwardRef(function WorkoutTable({ selectedDate, exerciseLi
         Add Exercise
       </Button>
     </Space>
+  </div>
   )
 })
 
